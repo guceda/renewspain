@@ -10,7 +10,9 @@ class Today extends Component {
         super();
         this.state = {
             cryptos: {},
-            currency: 'EUR'
+            currency: 'EUR',
+            query: null
+
         };
     }
     
@@ -22,24 +24,24 @@ class Today extends Component {
             forceTLS: true
         });
         // Subscribe to the 'coin-prices' channel
-        this.prices = this.pusher.subscribe('coin-prices');
-
-        axios.get('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,LTC&tsyms=EUR,USD')
-            .then(response => this.setState({ cryptos: response.data }))
+        //this.prices = this.pusher.subscribe('coin-prices');
+        const now = new Date().toISOString();
+        axios.get(`https://apidatos.ree.es/es/datos/generacion/estructura-generacion?start_date=2019-01-01T00:00&end_date=${now}&time_trunc=month`)
+            .then(response => this.setState({ query: response.data }))
             .catch(error => console.log(error))
     }
 
     componentDidMount() {
-        setInterval(() => {
-            axios.get('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,LTC&tsyms=EUR,USD')
-                .then(response => this.sendPricePusher(response.data))
-                .catch(error => console.log(error))
-        }, 10000)
+        // setInterval(() => {
+        //     axios.get('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,LTC&tsyms=EUR,USD')
+        //         .then(response => this.sendPricePusher(response.data))
+        //         .catch(error => console.log(error))
+        // }, 10000)
 
-        // We bind to the 'prices' event and use the data in it (price information) to update the state values, thus, realtime changes
-        this.prices.bind('prices', res => {
-            this.setState({ cryptos: res.prices });
-        }, this);
+        // // We bind to the 'prices' event and use the data in it (price information) to update the state values, thus, realtime changes
+        // this.prices.bind('prices', res => {
+        //     this.setState({ cryptos: res.prices });
+        // }, this);
     }
 
     sendPricePusher(data) {
@@ -56,17 +58,19 @@ class Today extends Component {
 
     // The render method contains the JSX code which will be compiled to HTML.
     render() {
-        const { cryptos, currency } = this.state;
-        const options = Object.keys(cryptos || {});
+         const data = this.state.query ? this.state.query : [];
+ 
         return (
+            data.length === 0 ? <h2>loading</h2> :
             <div className="today--section container">
-                <h2>Current Price</h2>
+                <h2>{data.type}</h2>
                 <div className="columns today--section__box">
-                    {options.map(coin => {
+                    {!data.included ? [] : data.included.map(tech => {
+                   debugger;npm install semantic-ui-statistic
                         return (
-                            <div className="column btc--section" key={coin}>
-                                <h5>{cryptos[coin] ? `${cryptos[coin][currency]} €` : 'no data available'}</h5>
-                                <p>1 {coin}</p>
+                            <div className="column btc--section" key={tech.type}>
+                                <h5>{tech.attributes.values[0].value}</h5>
+                                <p>{tech.type}</p>
                             </div>)
                     })}
                 </div>
