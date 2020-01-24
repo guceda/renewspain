@@ -1,21 +1,22 @@
-// Import React and Component
+'use strict';
 import React, { Component } from 'react';
-// Import CSS from App.css
-import './App.css';
-// Import the Today component to be used below
-import Today from './components/Today/Today'
-// Import the History component to be used below
-import History from './components/History/History'
+import Today from './components/Today.jsx';
+import QueryEditor from './components/QueryEditor.jsx';
+
+import Container from '@material-ui/core/Container';
+
 
 class App extends Component {
     render() {
         return (
-            <div className="results--section__inner">
+            <Container maxWidth="sm">
+                <QueryEditor/>
                 <Today />
-            </div>
-
+            </Container>
         );
     }
 }
 
 export default App;
+
+

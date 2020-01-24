@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import './today.css'
 
 import axios from 'axios'
 import Pusher from 'pusher-js'
+
+import Button from '@material-ui/core/Button';
+
 
 class Today extends Component {
     // Adds a class constructor that assigns the initial state values:
@@ -66,12 +68,13 @@ class Today extends Component {
                 <h2>{data.type}</h2>
                 <div className="columns today--section__box">
                     {!data.included ? [] : data.included.map(tech => {
-                   debugger;npm install semantic-ui-statistic
+                   
                         return (
                             <div className="column btc--section" key={tech.type}>
                                 <h5>{tech.attributes.values[0].value}</h5>
                                 <p>{tech.type}</p>
                             </div>)
+                            
                     })}
                 </div>
             </div>
