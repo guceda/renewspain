@@ -1,7 +1,7 @@
 import 'date-fns';
 import React, { useState } from 'react';
 import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from 'npm i ';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 
 export default function DatePicker() {
   const [selectedDate, setSelectedDate] = useState(new Date('2014-08-18T21:11:54'));

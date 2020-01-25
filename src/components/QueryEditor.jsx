@@ -1,67 +1,43 @@
 
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import React, { useState, useEffect } from 'react';
+import Select from './Select.jsx'
 
 import queryFields from '../queryFields.js';
-import DatePicker from './DatePicker.jsx';
+//import DatePicker from './DatePicker.jsx';
 
-const useStyles = makeStyles(theme => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-}));
 
-export default function QueryEditor() {
-    const classes = useStyles();
+
+export default function QueryEditor(props) {
     const [category, setCategory] = useState('');
     const [subcategory, setSubcategory] = useState('');
+
+    useEffect(()=> {
+        props.onSelectionChange({category, subcategory});
+    }, [category, subcategory])
 
     const handleChangeCat = e => { setCategory(e.target.value); };
     const handleChangeSubCat = e => { setSubcategory(e.target.value); };
 
-    const f = queryFields.children;
-    const renderModel = (_model) => {
-        const { name, children } = _model;
-        const opts = Object.keys(children);
-        const subOpts = children[category] ? children[category].children : [];
-        return (
-            <>
-                <FormControl key={'category'} className={classes.formControl}>
-                    <InputLabel id={`${name}-label`}>{name}</InputLabel>
-                    <Select labelId={`${name}-label`} id={name} value={category} onChange={handleChangeCat} >
-                        {opts.map(opt => {
-                            const name = children[opt].name
-                            return <MenuItem key={name} value={opt}>{name}</MenuItem>
-                        }
-                        )}
-                    </Select>
-                    <FormHelperText></FormHelperText>
-                </FormControl>
-                <FormControl key={'subCategory'} className={classes.formControl}>
-                    <InputLabel id={`${category}-label`}>{category}</InputLabel>
-                    <Select labelId={`${category}-label`} id={category} value={subcategory} onChange={handleChangeSubCat} >
-                        {subOpts.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-                    </Select>
-                    <FormHelperText></FormHelperText>
-                </FormControl>
-            </>
-        )
-
-
-    }
-
+    const { name, children } = queryFields.children;
+    const opts = Object.keys(children).map(x =>({key:children[x].name, value: x}))
+    const sub = children[category] ? children[category].children : [];
+    const subOpts = sub.map(x =>({key:x, value: x}))
     return (
-        <div>
-            {renderModel(queryFields.children)}
-        </div>
-    );
+        <>
+            <Select
+                name={name}
+                value={category}
+                onChange={handleChangeCat}
+                options={opts}
+                description={''}
+            />
+            <Select
+                name={category}
+                value={subcategory}
+                onChange={handleChangeSubCat}
+                options={subOpts}
+                description={''}
+            />
+        </>
+    )
 }
