@@ -19,7 +19,7 @@ export default function Dashboard() {
 
     const launchQuery = () => {
         if (!isOk()) return;
-            const url = queryBuilder.build(query);
+        const url = queryBuilder.build(query);
         console.log('Launching query', JSON.stringify(query));
         console.log('Launching url', url);
         axios.get(url).then(onResponse).catch(onError);
@@ -32,7 +32,15 @@ export default function Dashboard() {
     return (
         <>
             <QueryEditor onSelectionChange={setQuery} />
-            <div>{data && data.data && data.data.type}</div> :
+            {
+                data && data.data &&
+                <h1>{data.data.type}</h1>
+            }
+            {
+                data && data.included && data.included.map(x => (
+                    <h2>{`${x.type} -> ${x.attributes.type}`}</h2>
+                ))
+            }
         </>
     )
 }

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Select from './Select.jsx'
+import Button from './Button.jsx'
 
 import queryFields from './query/queryFields.js';
 
@@ -40,6 +41,7 @@ export default function QueryEditor(props) {
                 options={subOpts}
                 description={''}
             />
+            <Button onClick={()=>console.log('click')}>Retry</Button>
         </>
     )
 }
