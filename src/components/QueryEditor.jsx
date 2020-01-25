@@ -2,18 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import Select from './Select.jsx'
 
-import queryFields from '../queryFields.js';
-//import DatePicker from './DatePicker.jsx';
-
-
+import queryFields from './query/queryFields.js';
 
 export default function QueryEditor(props) {
     const [category, setCategory] = useState('');
     const [subcategory, setSubcategory] = useState('');
 
     useEffect(()=> {
+        setSubcategory("");
+        props.onSelectionChange({category, subcategory: ''});
+    }, [category])
+
+    useEffect(()=> {
         props.onSelectionChange({category, subcategory});
-    }, [category, subcategory])
+    }, [ subcategory])
 
     const handleChangeCat = e => { setCategory(e.target.value); };
     const handleChangeSubCat = e => { setSubcategory(e.target.value); };
