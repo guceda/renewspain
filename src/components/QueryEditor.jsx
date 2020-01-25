@@ -41,7 +41,7 @@ export default function QueryEditor(props) {
                 options={subOpts}
                 description={''}
             />
-            <Button onClick={()=>console.log('click')}>Retry</Button>
+            <Button onClick={props.onRetry}>Retry</Button>
         </>
     )
 }

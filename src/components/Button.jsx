@@ -13,11 +13,11 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function FloatingActionButtons({ icon, onClick, children }) {
+export default function FloatingActionButtons({ icon, onClick, children, disabled }) {
     const classes = useStyles();
 
     return (
-            <Fab variant="extended" onClick={onClick}>
+            <Fab variant="extended" onClick={onClick} disabled={disabled}>
                 <ReplayIcon className={classes.extendedIcon} />
                 {children}
             </Fab>

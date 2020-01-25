@@ -31,14 +31,14 @@ export default function Dashboard() {
 
     return (
         <>
-            <QueryEditor onSelectionChange={setQuery} />
+            <QueryEditor onSelectionChange={setQuery} onRetry={launchQuery} />
             {
                 data && data.data &&
                 <h1>{data.data.type}</h1>
             }
             {
                 data && data.included && data.included.map(x => (
-                    <h2>{`${x.type} -> ${x.attributes.type}`}</h2>
+                    <h2 key={x.type}>{`${x.type} -> ${x.attributes.type}`}</h2>
                 ))
             }
         </>
