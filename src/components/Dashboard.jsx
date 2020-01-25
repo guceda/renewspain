@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import QueryEditor from './QueryEditor.jsx';
+import Alert from './Alert.jsx';
 
 import axios from 'axios';
 import queryBuilder from './query/queryBuilder.js';
@@ -9,6 +10,7 @@ import queryBuilder from './query/queryBuilder.js';
 export default function Dashboard() {
     const [query, setQuery] = useState({});
     const [data, setData] = useState({});
+    const [error, setError] = useState(false);
 
     const isOk = () => (
         query.category &&
@@ -24,23 +26,25 @@ export default function Dashboard() {
         console.log('Launching url', url);
         axios.get(url).then(onResponse).catch(onError);
     }
-    const onResponse = (res) => { console.log(res.data); setData(res.data) }
-    const onError = error => console.log(error)
+    const onResponse = (res) => { console.log(res.data); setData(res.data); setError(false) }
+    const onError = error => setError(true);
 
     useEffect(launchQuery, [query])
 
     return (
         <>
             <QueryEditor onSelectionChange={setQuery} onRetry={launchQuery} />
-            {
+            {error ?
+                <Alert
+                    open={error}
+                    message={'Something unexpected happened. Please try again later.'}
+                    severity={'error'}
+                    onClose={() => setError(false)}
+                /> :
                 data && data.data &&
                 <h1>{data.data.type}</h1>
             }
-            {
-                data && data.included && data.included.map(x => (
-                    <h2 key={x.type}>{`${x.type} -> ${x.attributes.type}`}</h2>
-                ))
-            }
+
         </>
     )
 }

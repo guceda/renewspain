@@ -1,25 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
 import ReplayIcon from '@material-ui/icons/Replay';
-const useStyles = makeStyles(theme => ({
-    root: {
-        '& > *': {
-            margin: theme.spacing(1),
-        },
-    },
-    extendedIcon: {
-        marginRight: theme.spacing(1),
-    },
-}));
 
-export default function FloatingActionButtons({ icon, onClick, children, disabled }) {
-    const classes = useStyles();
 
+export default function FloatingActionButtons({ icon, onClick, disabled }) {
     return (
-            <Fab variant="extended" onClick={onClick} disabled={disabled}>
-                <ReplayIcon className={classes.extendedIcon} />
-                {children}
-            </Fab>
+        <IconButton onClick={onClick} disabled={disabled}>
+            <ReplayIcon/>
+        </IconButton>
     );
 }
