@@ -26,8 +26,8 @@ export default function Dashboard() {
         console.log('Launching url', url);
         axios.get(url).then(onResponse).catch(onError);
     }
-    const onResponse = (res) => { console.log(res.data); setData(res.data); setError(false) }
-    const onError = error => setError(true);
+    const onResponse = res => { console.log(res.data); setData(res.data); setError(false) }
+    const onError = error => { setError(true); setData({}); }
 
     useEffect(launchQuery, [query])
 
