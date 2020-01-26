@@ -1,6 +1,6 @@
 
 export default {
-    children: {
+    categories: {
         name: 'categoría',
         children: {
             balance: {
@@ -20,7 +20,7 @@ export default {
                     'demanda-maxima-horaria',
                     'perdidas-transporte',
                     'potencia-maxima-instantanea',
-                    'ire-general-media',               
+                    'ire-general-media',
                     'potencia-maxima-instantanea-variacion',
                     'potencia-maxima-instantanea-variacion-historico',
                     'demanda-tiempo-real',
@@ -87,5 +87,11 @@ export default {
                 ],
             },
         }
-    }
+    },
+    groupBy: [
+        'hour',
+        'day',
+        'month',
+        'year'
+    ]
 };

@@ -24,14 +24,25 @@ export default function Dashboard() {
     const launchQuery = () => {
         if (!isOk()) return;
         setLoading(true);
+        setError(false)
         setData({});
         const url = queryBuilder.build(query);
         console.log('Launching query', JSON.stringify(query));
         console.log('Launching url', url);
         axios.get(url).then(onResponse).catch(onError);
     }
-    const onResponse = res => { console.log(res.data); setData(res.data); setError(false); setLoading(false); }
-    const onError = error => { setError(true); setData({}); setLoading(false); }
+    const onResponse = res => {
+        console.log(res.data);
+        setData(res.data);
+        setError(null);
+        setLoading(false);
+    }
+
+    const onError = e => {
+        setError({ status: e.response.status, data: e.response.data });
+        setData({});
+        setLoading(false);
+    }
 
     useEffect(launchQuery, [query])
 
@@ -41,9 +52,13 @@ export default function Dashboard() {
             {loading && <Loader />}
             {error ?
                 <Alert
-                    open={error}
-                    message={'Something unexpected happened. Please try again later.'}
-                    severity={'error'}
+                    open={!!error}
+                    message={
+                        error.status === 400 ?
+                            error.data.errors[0].detail :
+                            'Upps, algo raro ha pasado.'
+                    }
+                    severity={error.status === 400 ? 'info' : 'error'}
                     onClose={() => setError(false)}
                 /> :
                 data && data.data &&

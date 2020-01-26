@@ -14,24 +14,31 @@ export default function QueryEditor(props) {
     const classes = useStyles();
     const [category, setCategory] = useState('');
     const [subcategory, setSubcategory] = useState('');
+    const [groupBy, setGroupBy] = useState('month');
 
 
     useEffect(() => {
         setSubcategory("");
-        props.onSelectionChange({ category, subcategory: '' });
+        props.onSelectionChange({ category, subcategory: '', groupBy });
     }, [category])
 
     useEffect(() => {
-        props.onSelectionChange({ category, subcategory });
+        props.onSelectionChange({ category, subcategory, groupBy });
     }, [subcategory])
+
+    useEffect(() => {
+        props.onSelectionChange({ category, subcategory, groupBy});
+    }, [groupBy])
 
     const handleChangeCat = e => { setCategory(e.target.value); };
     const handleChangeSubCat = e => { setSubcategory(e.target.value); };
+    const handleChangeGroupBy = e => { setGroupBy(e.target.value); };
 
-    const { name, children } = queryFields.children;
+    const { name, children } = queryFields.categories;
     const opts = Object.keys(children).map(x => ({ key: children[x].name, value: x }))
     const sub = children[category] ? children[category].children : [];
     const subOpts = sub.map(x => ({ key: x, value: x }))
+    const groupByOpts = queryFields.groupBy.map(x => ({ key: x, value: x }));
     return (
         <div className={classes.grow}>
             <AppBar position="static">
@@ -48,6 +55,13 @@ export default function QueryEditor(props) {
                         value={subcategory}
                         onChange={handleChangeSubCat}
                         options={subOpts}
+                        description={''}
+                    />
+                    <Select
+                        name={'group every'}
+                        value={groupBy}
+                        onChange={handleChangeGroupBy}
+                        options={groupByOpts}
                         description={''}
                     />
                     <Button onClick={props.onRetry}/>
