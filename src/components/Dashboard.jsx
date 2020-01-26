@@ -23,19 +23,22 @@ export default function Dashboard() {
     )
 
     const launchQuery = () => {
+        const responses = [];
         if (!isOk()) return;
         setLoading(true);
         setError(false)
         setData({});
-        const url = queryBuilder.build(query);
-        console.log('Launching query', JSON.stringify(query));
-        console.log('Launching url', url);
-        axios.get(url).then(onResponse).catch(onError);
+        console.log('query values', JSON.stringify(query));
+        const urls = queryBuilder.build(query);
+        console.log('launching queries', urls)
+        const promises = urls.map(url => axios.get(url).then(res => responses.push(res.data)).catch(onError));
+        Promise.all(promises).then(res => onResponse(res, responses)).catch(()=>{});
     }
 
-    const onResponse = res => {
-        console.log(res.data);
-        const hcData = buildData(res.data);
+    const onResponse = (order, results) => {
+        console.log('order', order);
+        console.log('query results', results);
+        const hcData = buildData(order, results);
         console.log(hcData)
         setData(hcData);
         setError(null);
@@ -48,14 +51,29 @@ export default function Dashboard() {
         setLoading(false);
     }
 
-    const buildData = (data) => {
+    const buildData = (order, results) => {
+        console.log('building data')
         const d = {};
-        d.series = data.included.map(s => ({
-            name: s.attributes.title,
-            data: s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value])
-        }));
-        d.title = data.data.type;
+        for (let i = 1; i <= order.length; i++) {
+            let idx = null;
+            if (i === 1) {
+                idx = order[i - 1] - 1;
+                //fill common properties only once;
+                d.title = results[i].data.type;
+                d.series = results[idx].included.map(s => ({
+                    name: s.attributes.title,
+                    data: s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value])
+                }));
+            }
 
+            idx = order[i] - 1;
+            if(results[idx]) {
+                results[idx].included.forEach((s, idx) => (
+                    d.series[idx].data.push(...s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value]))
+                ));
+            }
+        }
+        console.log('data built')
         return d;
     }
 
