@@ -5,51 +5,14 @@ import ReactHighcharts from 'react-highcharts';
 
 export default function HighCharts(props) {
 
-    const buildConfig = ({ data, title="", subtitle="" }) => ({
-
-        title: {
-            text: title
-        },
-
-        subtitle: {
-            text: subtitle
-        },
-
-        yAxis: {
-            title: {
-                text: 'Number of Employees'
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
-        },
-
-        plotOptions: {
-            series: {
-                label: {
-                    connectorAllowed: false
-                },
-                pointStart: 2010
-            }
-        },
+    const buildConfig = ({ data, title = "", subtitle = "" }) => ({
+        chart: { zoomType: 'x', animation: true },
+        title: { text: title },
+        subtitle: { text: subtitle },
+        xAxis: { type: 'datetime' },
+        plotOptions: { line: { marker: { enabled: false } } },
         series: data,
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
-                }
-            }]
-        }
-
+        credits: { enabled: false }
     })
     return <ReactHighcharts config={buildConfig(props)}></ReactHighcharts>
 
