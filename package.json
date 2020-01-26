@@ -13,13 +13,14 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
-    "date-fns": "^1.0.0",
+    "date-fns": "^2.0.0-beta.5",
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "pusher": "^3.0.0",
     "pusher-js": "^5.0.3",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-highcharts": "^16.1.0",
     "react-scripts": "3.3.0"
   },
   "scripts": {

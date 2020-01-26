@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Select from './atoms/Select.jsx';
 import IconButton from './atoms/IconButton.jsx';
+import DatePicker from './atoms/DatePicker.jsx';
 
 import queryFields from './query/queryFields.js';
 
@@ -12,27 +13,27 @@ const useStyles = makeStyles(theme => ({ grow: { flexGrow: 1 } }));
 
 export default function QueryEditor(props) {
     const classes = useStyles();
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('generacion');
     const [subcategory, setSubcategory] = useState('');
-    const [groupBy, setGroupBy] = useState('month');
+    const [groupBy, setGroupBy] = useState('day');
+    const [from, setFrom] = useState(new Date(Date.now() - (86400000 * 30)).toISOString());
+    const [to, setTo] = useState(new Date().toISOString());
 
 
     useEffect(() => {
         setSubcategory("");
-        props.onSelectionChange({ category, subcategory: '', groupBy });
+        props.onSelectionChange({ category, subcategory: '', groupBy, from, to });
     }, [category])
 
     useEffect(() => {
-        props.onSelectionChange({ category, subcategory, groupBy });
-    }, [subcategory])
+        props.onSelectionChange({ category, subcategory, groupBy, from, to });
+    }, [subcategory, groupBy, from, to])
 
-    useEffect(() => {
-        props.onSelectionChange({ category, subcategory, groupBy});
-    }, [groupBy])
-
-    const handleChangeCat = e => { setCategory(e.target.value); };
-    const handleChangeSubCat = e => { setSubcategory(e.target.value); };
-    const handleChangeGroupBy = e => { setGroupBy(e.target.value); };
+    const handleChangeCat = e => setCategory(e.target.value);
+    const handleChangeSubCat = e => setSubcategory(e.target.value);
+    const handleChangeGroupBy = e => setGroupBy(e.target.value);
+    const handleChangeFrom = e => setFrom(e.toISOString());
+    const handleChangeTo = e => setTo(e.toISOString());
 
     const { name, children } = queryFields.categories;
     const opts = Object.keys(children).map(x => ({ key: children[x].name, value: x }))
@@ -64,10 +65,12 @@ export default function QueryEditor(props) {
                         options={groupByOpts}
                         description={''}
                     />
-                    <IconButton onClick={props.onRetry}/>
+                    <DatePicker value={from} onChange={handleChangeFrom} />
+                    <DatePicker value={to} onChange={handleChangeTo} />
+                    <IconButton onClick={props.onRetry} />
                 </Toolbar>
             </AppBar>
-       
+
         </div>
 
     )
