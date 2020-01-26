@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import QueryEditor from './QueryEditor.jsx';
-import Alert from './Alert.jsx';
-import Loader from './Loader.jsx';
+import Alert from './atoms/Alert.jsx';
+import Loader from './atoms/Loader.jsx';
 
 import axios from 'axios';
 import queryBuilder from './query/queryBuilder.js';

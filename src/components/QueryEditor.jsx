@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Select from './Select.jsx';
-import Button from './Button.jsx';
+import Select from './atoms/Select.jsx';
+import IconButton from './atoms/IconButton.jsx';
 
 import queryFields from './query/queryFields.js';
 
@@ -64,7 +64,7 @@ export default function QueryEditor(props) {
                         options={groupByOpts}
                         description={''}
                     />
-                    <Button onClick={props.onRetry}/>
+                    <IconButton onClick={props.onRetry}/>
                 </Toolbar>
             </AppBar>
        
