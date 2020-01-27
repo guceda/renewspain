@@ -22,18 +22,21 @@ export default function Dashboard() {
         query.subcategory !== ""
     )
 
-    // const launchQuery = async() => {
-    //     const responses = [];
-    //     if (!isOk()) return;
-    //     setLoading(true);
-    //     setError(false)
-    //     setData({});
-    //     console.log('query values', JSON.stringify(query));
-    //     const urls = queryBuilder.build(query);
-    //     console.log('launching queries', urls)
-    //     const promises = urls.map(url => axios.get(url).then(res => responses.push(res.data)).catch(onError));
-    //     Promise.all(promises).then(res => onResponse(res, responses)).catch(()=>{});
-    // }
+    
+    const launchQuery = () => {
+        (async () => {
+            if (!isOk()) return;
+            setLoading(true);
+            setError(false)
+            setData({});
+            const urls = queryBuilder.build(query);
+            for await (const [i, url] of urls.entries()) {
+                const [res, err] = await _handle(axios.get(url));
+                if (err) { onError(err); break; };
+                onResponse({ data: res, idx: i, maxIdx: urls.length - 1 });
+            }
+        })();
+    }
 
     const onResponse = (order, results) => {
         console.log('order', order);
@@ -82,24 +85,12 @@ export default function Dashboard() {
         .catch(err => ([undefined, err]))
 
 
-    useEffect(() => {
-        (async () => {
-            if (!isOk()) return;
-            setLoading(true);
-            setError(false)
-            setData({});
-            const urls = queryBuilder.build(query);
-            for await (const [i, url] of urls.entries()) {
-                const [res, err] = await _handle(axios.get(url));
-                if (err) { onError(err); break; };
-                onResponse({ data: res, idx: i, maxIdx: urls.length - 1 });
-            }
-        })();
-    }, [query])
+    useEffect(launchQuery, [query])
 
+    console.log('render')
     return (
         <>
-            <QueryEditor onSelectionChange={setQuery} onRetry={() => { }} />
+            <QueryEditor onSelectionChange={setQuery} onRetry={launchQuery} />
             {loading && <Loader />}
             {error ?
                 <Alert
