@@ -22,18 +22,18 @@ export default function Dashboard() {
         query.subcategory !== ""
     )
 
-    const launchQuery = () => {
-        const responses = [];
-        if (!isOk()) return;
-        setLoading(true);
-        setError(false)
-        setData({});
-        console.log('query values', JSON.stringify(query));
-        const urls = queryBuilder.build(query);
-        console.log('launching queries', urls)
-        const promises = urls.map(url => axios.get(url).then(res => responses.push(res.data)).catch(onError));
-        Promise.all(promises).then(res => onResponse(res, responses)).catch(()=>{});
-    }
+    // const launchQuery = async() => {
+    //     const responses = [];
+    //     if (!isOk()) return;
+    //     setLoading(true);
+    //     setError(false)
+    //     setData({});
+    //     console.log('query values', JSON.stringify(query));
+    //     const urls = queryBuilder.build(query);
+    //     console.log('launching queries', urls)
+    //     const promises = urls.map(url => axios.get(url).then(res => responses.push(res.data)).catch(onError));
+    //     Promise.all(promises).then(res => onResponse(res, responses)).catch(()=>{});
+    // }
 
     const onResponse = (order, results) => {
         console.log('order', order);
@@ -67,7 +67,7 @@ export default function Dashboard() {
             }
 
             idx = order[i] - 1;
-            if(results[idx]) {
+            if (results[idx]) {
                 results[idx].included.forEach((s, idx) => (
                     d.series[idx].data.push(...s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value]))
                 ));
@@ -77,11 +77,29 @@ export default function Dashboard() {
         return d;
     }
 
-    useEffect(launchQuery, [query])
+    const _handle = (promise) => promise
+        .then(res => ([res, undefined]))
+        .catch(err => ([undefined, err]))
+
+
+    useEffect(() => {
+        (async () => {
+            if (!isOk()) return;
+            setLoading(true);
+            setError(false)
+            setData({});
+            const urls = queryBuilder.build(query);
+            for await (const [i, url] of urls.entries()) {
+                const [res, err] = await _handle(axios.get(url));
+                if (err) { onError(err); break; };
+                onResponse({ data: res, idx: i, maxIdx: urls.length - 1 });
+            }
+        })();
+    }, [query])
 
     return (
         <>
-            <QueryEditor onSelectionChange={setQuery} onRetry={launchQuery} />
+            <QueryEditor onSelectionChange={setQuery} onRetry={() => { }} />
             {loading && <Loader />}
             {error ?
                 <Alert
