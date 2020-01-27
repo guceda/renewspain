@@ -22,26 +22,8 @@ export default function Dashboard() {
         query.subcategory !== ""
     )
 
-    
-    const launchQuery = () => {
-        (async () => {
-            if (!isOk()) return;
-            setLoading(true);
-            setError(false)
-            setData({});
-            const urls = queryBuilder.build(query);
-            for await (const [i, url] of urls.entries()) {
-                const [res, err] = await _handle(axios.get(url));
-                if (err) { onError(err); break; };
-                onResponse({ data: res, idx: i, maxIdx: urls.length - 1 });
-            }
-        })();
-    }
-
-    const onResponse = (order, results) => {
-        console.log('order', order);
-        console.log('query results', results);
-        const hcData = buildData(order, results);
+    const onResponse = (result) => {
+        const hcData = buildData(result);
         console.log(hcData)
         setData(hcData);
         setError(null);
@@ -54,29 +36,14 @@ export default function Dashboard() {
         setLoading(false);
     }
 
-    const buildData = (order, results) => {
-        console.log('building data')
+    const buildData = ({ data, idx, maxIdx }) => {
         const d = {};
-        for (let i = 1; i <= order.length; i++) {
-            let idx = null;
-            if (i === 1) {
-                idx = order[i - 1] - 1;
-                //fill common properties only once;
-                d.title = results[i].data.type;
-                d.series = results[idx].included.map(s => ({
-                    name: s.attributes.title,
-                    data: s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value])
-                }));
-            }
+        d.series = data.data.included.map(s => ({
+            name: s.attributes.title,
+            data: s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value])
+        }));
+        d.title = data.data.data.type;
 
-            idx = order[i] - 1;
-            if (results[idx]) {
-                results[idx].included.forEach((s, idx) => (
-                    d.series[idx].data.push(...s.attributes.values.map(v => [new Date(v.datetime).getTime(), v.value]))
-                ));
-            }
-        }
-        console.log('data built')
         return d;
     }
 
@@ -84,10 +51,24 @@ export default function Dashboard() {
         .then(res => ([res, undefined]))
         .catch(err => ([undefined, err]))
 
+    const launchQuery = () => {
+        (async () => {
+            if (!isOk()) return;
+            setLoading(true);
+            setError(false)
+            setData({});
+            const urls = queryBuilder.build(query);
+            console.log('urls', urls)
+            for await (const [i, url] of urls.entries()) {
+                const [res, err] = await _handle(axios.get(url));
+                if (err) { onError(err); break; };
+                onResponse({ data: res, idx: i, maxIdx: urls.length - 1 });
+            }
+        })();
+    }
 
     useEffect(launchQuery, [query])
 
-    console.log('render')
     return (
         <>
             <QueryEditor onSelectionChange={setQuery} onRetry={launchQuery} />
