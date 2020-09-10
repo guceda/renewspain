@@ -1,7 +1,5 @@
 # Run
 npm start 
-node server
-
 
 # IMPORTANTE
 hacer las peticiones por orden y ir actualizando el grafico segun llegan
