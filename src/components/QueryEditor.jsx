@@ -16,13 +16,19 @@ export default function QueryEditor(props) {
     const [category, setCategory] = useState('generacion');
     const [subcategory, setSubcategory] = useState('');
     const [groupBy, setGroupBy] = useState('day');
-    const [from, setFrom] = useState(new Date(Date.now() - (86400000 * 30)).toISOString());
+
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth();
+    const date = new Date().getDate();
+    const [from, setFrom] = useState(new Date(year, month, date).toISOString());
+
     const [to, setTo] = useState(new Date().toISOString());
 
 
     useEffect(() => {
-        setSubcategory("");
-        props.onSelectionChange({ category, subcategory: '', groupBy, from, to });
+        const subcategory = '';
+        setSubcategory(subcategory);
+        props.onSelectionChange({ category, subcategory, groupBy, from, to });
     }, [category])
 
     useEffect(() => {
